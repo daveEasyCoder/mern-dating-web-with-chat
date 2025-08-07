@@ -1,55 +1,103 @@
-import React from 'react'
+import React from 'react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useGlobalContext } from '../../context/Context';
 
-const Register = () => {
+const Signup = () => {
+
+  const {baseURL} = useGlobalContext();
+  const [userInfo,setUserInfo] = React.useState({
+    fullname: '',
+    email: '',
+    password: ''
+  });
+
+  const [error,setError] = useState('');
+  const handleChange = (e) => {
+    setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
+  };
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const handleSubmit = async (e) => {
+    e.preventDefault(); 
+    setError('');
+    if(userInfo.fullname === ''){
+       setError("Fullname is required")
+    }else if(userInfo.email === ''){
+      setError("Email is required")
+    }else if(!emailRegex.test(userInfo.email)){
+       setError("Email is not valid")
+    } else if(userInfo.password === ''){
+      setError("Password is required")
+    } else {
+     try {
+      
+        const res = await axios.post(`${baseURL}/api/users/register`, userInfo);
+     } catch (error) {
+       console.error("Server is not responding:", error);
+       setError("Server is not responding. Please try again.");
+     }
+    }
+  }
   return (
-    <div className='min-h-screen flex items-center justify-center bg-gray-100'>
-       <form action="" className='max-w-2xl flex-1 bg-white shadow rounded p-6'>
-        <div>
-            <h2 className='text-2xl text-center mb-6 font-semibold text-gray-800'>Create Your Profile</h2>
-        </div>
-          <div className='grid grid-cols-6 gap-2'>
-              <div className='col-span-3'>
-                 <label htmlFor="fullname" className='font-semibold text-gray-700'>Full name:</label>
-                 <input type="text" className='border border-gray-200 rounded px-2 py-2 mt-1 text-sm w-full' />
-              </div>
-              <div className='col-span-3'>
-                 <label htmlFor="email" className='font-semibold text-gray-700'>Email</label>
-                 <input type="text" className='border border-gray-200 rounded px-2 py-2 mt-1 text-sm w-full' />
-              </div>
-              <div className='col-span-2'>
-                 <label htmlFor="fullname" className='font-semibold text-gray-700'> Gender</label>
-                 <select name="gender" id="gender" className='border border-gray-300 rounded px-2 py-2 mt-1 text-sm w-full'>
-                    <option value="male">Select Gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="other">Other</option>
-                 </select>
-              </div>
-              <div className='col-span-2'>
-                 <label htmlFor="age" className='font-semibold text-gray-700'>Age</label>
-                 <input type="text" min={18} className='border border-gray-200 rounded px-2 py-2 mt-1 text-sm w-full' />
-              </div>
-              <div className='col-span-2'>
-                 <label htmlFor="height" className='font-semibold text-gray-700'>Height</label>
-                 <input type="text" min={1} placeholder='e.g, 5.8' name='height' className='border border-gray-200 rounded px-2 py-2 mt-1 text-sm w-full' />
-              </div>
-              <div className='col-span-3'>
-                 <label htmlFor="skinColor" className='font-semibold text-gray-700'>Skin Color</label>
-                 <input type="text" placeholder='e.g, Fair, Medium, Dark' className='border border-gray-300 rounded px-2 py-2 mt-1 text-sm w-full' />
-              </div>
-              <div className='col-span-3'>
-                 <label htmlFor="job" className='font-semibold text-gray-700'>Job</label>
-                 <input type="text" className='border border-gray-300 rounded px-2 py-2 mt-1 text-sm w-full' />
-              </div>
-              <div className='col-span-6'>
-                 <label htmlFor="job" className='font-semibold text-gray-700'>Interests(comma-separated)</label>
-                 <textarea rows={5} type="text" placeholder='e.g, Photography,Hiking, Cooking, Travel' className='border border-gray-300 rounded px-2 py-2 mt-1 text-sm w-full' />
-              </div>
-          </div>
-          <button type='submit' className='w-full py-2 bg-black rounded text-white mt-3 cursor-pointer hover:bg-gray-800 duration-300'>Create Profile</button>
-       </form>
-    </div>
-  )
-}
+    <div className="flex min-h-screen justify-center items-center bg-gray-50 px-4">
+      <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-md">
+        <h1 className="text-2xl font-bold text-center text-pink-600 mb-6">LoveConnect</h1>
+        <h2 className="text-xl font-semibold text-center mb-4">Create your account</h2>
 
-export default Register
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium">Name</label>
+            <input
+              type="text"
+              name="name"
+              onChange={handleChange}
+              value={userInfo.fullname}
+              className="w-full border mt-1 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              placeholder="Your full name"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium">Email</label>
+            <input
+              type="email"
+              name='email'
+              value={userInfo.email}
+              onChange={handleChange}
+              className="w-full border mt-1 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              placeholder="you@example.com"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium">Password</label>
+            <input
+              type="password"
+              name='password'
+              value={userInfo.password}
+              onChange={handleChange}
+              className="w-full border mt-1 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
+              placeholder="Create a password"
+            />
+          </div>
+
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <button
+            type="submit"
+            className="w-full bg-pink-600 text-white py-2 rounded-md hover:bg-pink-700 transition"
+          >
+            Sign Up
+          </button>
+        </form>
+
+        <p className="text-sm text-center mt-4">
+          Already have an account?{' '}
+          <Link to="/login" className="text-pink-600 hover:underline">Login</Link>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default Signup;
