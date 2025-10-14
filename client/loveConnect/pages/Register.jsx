@@ -1,11 +1,15 @@
 import React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useGlobalContext } from '../../context/Context';
+import { useGlobalContext } from '../context/Context';
+import axios from 'axios'
+
+import {toastSuccess} from '../utility/toast'
 
 const Signup = () => {
 
   const {baseURL} = useGlobalContext();
+  
   const [userInfo,setUserInfo] = React.useState({
     fullname: '',
     email: '',
@@ -13,14 +17,20 @@ const Signup = () => {
   });
 
   const [error,setError] = useState('');
+  const [message,setMessage] = useState('');
+
+  const [loading,setLoading] = useState(false);
+
   const handleChange = (e) => {
     setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
   };
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
   const handleSubmit = async (e) => {
     e.preventDefault(); 
     setError('');
+    setMessage('');
     if(userInfo.fullname === ''){
        setError("Fullname is required")
     }else if(userInfo.email === ''){
@@ -31,11 +41,25 @@ const Signup = () => {
       setError("Password is required")
     } else {
      try {
-      
+
+        setLoading(true)
         const res = await axios.post(`${baseURL}/api/users/register`, userInfo);
+        if(res.data.success){
+          console.log(res.data); 
+          toastSuccess("Registration successfull!");
+          setMessage("Please check your email to verify your account.")
+          setUserInfo({
+            fullname: '',
+            email: '',
+            password: ''
+          })
+        }
+        setLoading(false)
+    
      } catch (error) {
        console.error("Server is not responding:", error);
        setError("Server is not responding. Please try again.");
+       setLoading(false)
      }
     }
   }
@@ -50,7 +74,7 @@ const Signup = () => {
             <label className="block text-sm font-medium">Name</label>
             <input
               type="text"
-              name="name"
+              name="fullname"
               onChange={handleChange}
               value={userInfo.fullname}
               className="w-full border mt-1 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-pink-500"
@@ -83,9 +107,11 @@ const Signup = () => {
           </div>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
+          {message && <p className="text-green-700 text-sm">{message}</p>}
           <button
             type="submit"
-            className="w-full bg-pink-600 text-white py-2 rounded-md hover:bg-pink-700 transition"
+            disabled = {loading}
+            className={`w-full bg-pink-600 ${loading ? 'opacity-50' : ''} text-white py-2 rounded-md hover:bg-pink-700 transition`}
           >
             Sign Up
           </button>

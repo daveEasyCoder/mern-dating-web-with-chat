@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-    name:{type:String,required:true},
+    fullname:{type:String,required:true},
     email:{type:String,required:true,unique:true},
     password:{type:String,required:true},
     gender:{type:String,default:''},
@@ -9,7 +9,8 @@ const userSchema = new mongoose.Schema({
     height:{type:String,default:''},
     skinColor:{type:String,default:''},
     job:{type:String,default:''},
-    hobbies:{type:String,default:''},
+    hobbies:[{type:String}],
+    isVerified:{type:Boolean,default:false},
 
     likedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     likedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],

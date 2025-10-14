@@ -2,18 +2,44 @@ import React from 'react';
 import { FaHeart, FaRegHeart, FaSearch } from 'react-icons/fa';
 import { FiMapPin } from 'react-icons/fi';
 import { BiMessageRounded } from 'react-icons/bi'
+import { useGlobalContext } from '../context/Context';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { toastError, toastSuccess } from '../utility/toast';
 
 const PersonCard = ({ person }) => {
+
+  const {baseURL,user,setPeople} = useGlobalContext()
+  const navigate = useNavigate()
+
+  const handleLike = async (id) => {
+  
+     try {
+       const res = await axios.post(`${baseURL}/api/users/like-user`, {id}, {withCredentials:true});
+       if(res.data.success){
+        setPeople(res.data.users)
+        toastSuccess(res.data.msg)
+       }
+     } catch (err) {
+      if(err.response){
+        if(err.response.data.message){
+          toastError(err.response.data.message)
+        }
+      }else{
+         console.log(err);
+      }
+     }
+  }
   return (
-    <div className="bg-white rounded-lg shadow p-4">
+    <div  className="bg-white rounded-lg shadow p-4">
       {/* Profile Image Placeholder */}
-      <div className="h-48 bg-gray-200 rounded-md relative mb-4 flex items-center justify-center">
-        <FaHeart className="absolute top-2 right-2 text-red-500" />
-        <span className="text-gray-400">Image</span>
+      <div onClick={() => navigate(`/detail-person/${person._id}`)} className="h-96 md:h-48 bg-gray-200 rounded-md relative mb-4 flex items-center justify-center">
+        {/* <span className="text-gray-400">Image</span> */}
+        <img className='h-full w-full object-cover' src={`${baseURL}/uploads/${person?.profilePicture}`} alt="Image" />
       </div>
 
       {/* Details */}
-      <h2 className="text-lg font-semibold">{person.name}, {person.age}</h2>
+      <h2 className="text-lg font-semibold">{person.fullname}, {person.age}</h2>
       <p className="text-sm text-gray-600">{person.job}</p>
       <div className="flex items-center text-gray-500 text-sm mt-1">
         <FiMapPin className="mr-1" /> {person.location}
@@ -21,23 +47,17 @@ const PersonCard = ({ person }) => {
 
       {/* Interests */}
       <div className="flex flex-wrap gap-2 mt-3">
-        {person.interests.slice(0, 3).map((interest, i) => (
-          <span key={i} className="bg-gray-100 text-sm px-2 py-1 rounded">
-            {interest}
-          </span>
-        ))}
-        {person.interests.length > 3 && (
-          <span className="bg-gray-200 text-sm px-2 py-1 rounded">+{person.interests.length - 3}</span>
-        )}
+            {person.hobbies.map((h,index) => <span key={index} className="bg-gray-100 text-sm px-2 py-1 rounded">{h}</span>)}
+          <span className="bg-gray-200 text-sm px-2 py-1 rounded">+{person.hobbies.length - 1}</span>
       </div>
 
       {/* Buttons */}
       <div className="mt-4 flex justify-between items-center">
-        <button className="flex-1 bg-gray-100 hover:bg-gray-200 py-2 rounded-md text-sm font-medium">
-          <FaRegHeart className="inline-block mr-2" />
+        <button onClick={() => handleLike(person._id)} className="flex-1 bg-gray-100 hover:bg-gray-200 py-2 rounded-md text-sm font-medium">
+          <FaHeart className={`${person?.likedBy.includes(user.id) ? 'text-red-600' : 'text-gray-500'} inline-block mr-2`} />
           Interested
         </button>
-        <button className="ml-2 bg-white border rounded-md p-2 hover:bg-gray-100">
+        <button  onClick={() => navigate(`/chat/${person._id}`)} className="ml-2 bg-white border rounded-md p-2 hover:bg-gray-100">
           <BiMessageRounded />
         </button>
       </div>

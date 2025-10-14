@@ -21,3 +21,18 @@ body{
  width: 120px;
  background-color: indigo;
 }
+
+.mobile-link{
+      padding-left: 10px;
+      background:linear-gradient(to right, rgba(254, 136, 63, 0.4),rgba(254, 136, 63, 0.1))
+}
+.mobile-link::before{
+      content: '';
+      position: absolute;
+      top:50%;
+      transform: translateY(-50%);
+      left:0px;
+      height:90%;
+      width: 2px;
+      background-color: rgb(241, 86, 19);
+}
