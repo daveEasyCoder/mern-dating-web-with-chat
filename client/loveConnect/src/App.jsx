@@ -31,7 +31,7 @@ function AppContent() {
              <Route path='/signup' element= {<Signup />}/>
              <Route path='/discover' element= {<Discover />}/>
              <Route path='/detail-person/:id' element= {<DetailPerson />}/>
-             <Route path="/chat/:userId" element={<ChatPage />} />
+             <Route path="/chat/:receiverId" element={<ChatPage />} />
 
 
              <Route path='/verify-email/:token' element= {<VerifyEmail />}/>

@@ -82,9 +82,13 @@ const ProfileView = () => {
         }
         getProfile()
     }, [])
+
+    if(loading) return <div className='min-h-screen flex justify-center items-center'>
+        <div className='h-10 w-10 rounded-full animate-spin border border-black'></div>
+    </div>
     return (
         <div className="min-h-screen bg-gray-100 py-8 px-4">
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-4xl mx-auto">
                 {/* Main Profile Card */}
                 <div className="bg-white  rounded-3xl shadow-sm overflow-hidden border border-white/30">
                     {/* Header with Gradient Background */}

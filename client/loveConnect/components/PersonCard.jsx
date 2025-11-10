@@ -9,29 +9,13 @@ import { toastError, toastSuccess } from '../utility/toast';
 
 const PersonCard = ({ person }) => {
 
-  const {baseURL,user,setPeople} = useGlobalContext()
+  const {baseURL,user,handleLike} = useGlobalContext()
   const navigate = useNavigate()
 
-  const handleLike = async (id) => {
-  
-     try {
-       const res = await axios.post(`${baseURL}/api/users/like-user`, {id}, {withCredentials:true});
-       if(res.data.success){
-        setPeople(res.data.users)
-        toastSuccess(res.data.msg)
-       }
-     } catch (err) {
-      if(err.response){
-        if(err.response.data.message){
-          toastError(err.response.data.message)
-        }
-      }else{
-         console.log(err);
-      }
-     }
-  }
+
+
   return (
-    <div  className="bg-white rounded-lg shadow p-4">
+    <div  className="bg-white rounded-lg  shadow p-4">
       {/* Profile Image Placeholder */}
       <div onClick={() => navigate(`/detail-person/${person._id}`)} className="h-96 md:h-48 bg-gray-200 rounded-md relative mb-4 flex items-center justify-center">
         {/* <span className="text-gray-400">Image</span> */}
@@ -57,7 +41,7 @@ const PersonCard = ({ person }) => {
           <FaHeart className={`${person?.likedBy.includes(user.id) ? 'text-red-600' : 'text-gray-500'} inline-block mr-2`} />
           Interested
         </button>
-        <button  onClick={() => navigate(`/chat/${person._id}`)} className="ml-2 bg-white border rounded-md p-2 hover:bg-gray-100">
+        <button onClick={() => navigate(`/chat/${person._id}`)} className="ml-2 bg-white border cursor-pointer rounded-md p-2 hover:bg-gray-100">
           <BiMessageRounded />
         </button>
       </div>

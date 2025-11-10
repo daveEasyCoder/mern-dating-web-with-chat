@@ -3,7 +3,8 @@ import Message from '../Model/message.js'
 
 export const createConversation = async (req, res) => {
   const { receiverId,senderId } = req.body;
-
+  
+  
   try {
     let conv = await Conversation.findOne({ members: { $all: [senderId, receiverId] } });
     if (!conv) {

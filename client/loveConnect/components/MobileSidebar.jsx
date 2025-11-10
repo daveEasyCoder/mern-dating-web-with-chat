@@ -11,7 +11,7 @@ const MobileSidebar = ({user,link,setMobileActiveTab,handleLogout,mobileActiveTa
                 
                 {
                     link.map((lnk,index) => (
-                        <li onClick={() => setMobileActiveTab(index)} className={`${mobileActiveTab === index ? 'mobile-link' : ''} relative py-2`}> <Link to={`/${lnk.to}`}>{lnk.name}</Link> </li>
+                        <li key={index} onClick={() => setMobileActiveTab(index)} className={`${mobileActiveTab === index ? 'mobile-link' : ''} relative py-2`}> <Link to={`/${lnk.to}`}>{lnk.name}</Link> </li>
                     )) 
                 }
                 {

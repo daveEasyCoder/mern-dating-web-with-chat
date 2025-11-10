@@ -19,9 +19,6 @@ const Navbar = () => {
         name:'Profile',
         to:'profile-view',
     },{
-        name:'Chat',
-        to:'chat',
-    },{
         name:'Discover',
         to:'discover',
     }]

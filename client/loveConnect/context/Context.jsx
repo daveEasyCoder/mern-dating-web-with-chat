@@ -2,6 +2,8 @@
 import { useEffect } from 'react';
 import { createContext, useContext, useState } from 'react';
 import { io } from "socket.io-client";
+import { toastSuccess } from '../utility/toast';
+import axios from 'axios';
 
 const Context = createContext();
 
@@ -18,6 +20,25 @@ export const ApiProvider = ({ children }) => {
        setUser(storedUser)
     }
   }
+
+    const handleLike = async (id) => {
+    
+       try {
+         const res = await axios.post(`${baseURL}/api/users/like-user`, {id}, {withCredentials:true});
+         if(res.data.success){
+          setPeople(res.data.users)
+          toastSuccess(res.data.msg)
+         }
+       } catch (err) {
+        if(err.response){
+          if(err.response.data.message){
+            toastError(err.response.data.message)
+          }
+        }else{
+           console.log(err);
+        }
+       }
+    }
 
 
   const socket = io("http://localhost:301");
@@ -38,7 +59,7 @@ export const ApiProvider = ({ children }) => {
   },[])
 
   return (
-    <Context.Provider value={{ baseURL,user,setUser,people,setPeople }}>
+    <Context.Provider value={{ baseURL,user,setUser,people,setPeople,handleLike }}>
       {children}
     </Context.Provider>
   );

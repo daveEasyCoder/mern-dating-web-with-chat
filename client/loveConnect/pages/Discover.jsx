@@ -9,10 +9,11 @@ import Filter from '../components/Filter';
 
 const Discover = () => {
 
-  const {user,setUser,baseURL,people,setPeople} = useGlobalContext()
+  const {user,setUser,baseURL,setPeople} = useGlobalContext()
   const [loading,setLoading] = useState(false)
   const [error,setError] = useState("")
   const [showFilterOption,setShowFilterOption] = useState(true)
+  const [filteredPeople, setFilteredPeople] = useState([]);
 
   
   const navigate = useNavigate()
@@ -60,13 +61,16 @@ const Discover = () => {
         </button>
       </div>
 
-      { showFilterOption && <Filter />}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {people.map((person, index) => (
-           person?.email !== user?.email && <PersonCard key={index} person={person} />
-        ))}
-      </div>
+      { showFilterOption && <Filter setFilteredPeople={setFilteredPeople} />}
+       {
+        loading ? <div><div>loading</div></div> : 
+           filteredPeople && filteredPeople.length ? 
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredPeople.map((person, index) => (
+                person?.email !== user?.email && person?.gender !== user?.gender && <PersonCard key={index} person={person} />
+              ))}
+            </div> : <div className=' h-[35vh] flex items-center justify-center text-2xl font-bold text-gray-800'>No Match!</div>
+       }
     </div>
   );
 };
